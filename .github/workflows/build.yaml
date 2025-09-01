@@ -43,7 +43,6 @@ jobs:
           registry: ${{ env.SOURCE_REGISTRY_HOST }}
           username: ${{ secrets.SOURCE_REGISTRY_USER }}
           password: ${{ secrets.SOURCE_REGISTRY_PASSWORD }}
-          auth_file_path: /run/containers/0/auth.json
 
       - name: Use buildah bud to create the image
         id: build-image
