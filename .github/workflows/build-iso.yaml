@@ -43,10 +43,10 @@ jobs:
       - name: Upload iso to release
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.REPO_TOKEN }}
-          file: ${{ steps.build-iso.outputs.output-directory }}/bootiso/install.iso
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.build-iso.outputs.output-directory }}/output/bootiso/install.iso
           asset_name: homelab-turbo-one-amd64-iso
           tag: ${{ github.ref }}
           overwrite: true
-          body: "homelab turbo-one server iso file."
+          body: "homelab server turbo-one iso file."
 
