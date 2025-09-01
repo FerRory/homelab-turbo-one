@@ -1,4 +1,5 @@
-FROM registry.redhat.io/rhel10/rhel-bootc:10.0
+#FROM registry.redhat.io/rhel10/rhel-bootc:10.0
+FROM quay.io/centos-bootc/centos-bootc:stream10
 
 LABEL org.opencontainers.image.source https://github.com/FerRory/ferrory-homelab
 
