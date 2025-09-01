@@ -1,0 +1,12 @@
+[Unit]
+Description=HTTPD Web Server Container
+After=network-online.target
+
+[Container]
+ContainerName=httpd
+Image=docker.io/library/httpd:latest
+PublishPort=8080:80
+Volume=/var/www/html:/var/www/html:ro
+
+[Install]
+WantedBy=multi-user.target default.target

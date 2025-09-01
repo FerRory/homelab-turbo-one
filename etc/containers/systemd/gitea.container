@@ -1,0 +1,14 @@
+[Unit]
+Description=Gitea
+After=network-online.target
+
+[Container]
+ContainerName=gitea
+Image=docker.gitea.com/gitea:1.24.5
+PublishPort=3000:3000,2222,22
+Volume=/var/gitea/data:/data:Z
+Volume=/etc/timezone:/etc/timezone:ro
+Volume=/etc/localtime:/etc/localtime:ro
+
+[Install]
+WantedBy=multi-user.target default.target
