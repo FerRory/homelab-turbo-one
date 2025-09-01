@@ -40,9 +40,13 @@ jobs:
             iso
           rootfs: xfs
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload iso to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: iso
-          path: ${{ steps.build-iso.outputs.output-directory }}
-          if-no-files-found: error
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.build-iso.outputs.output-directory }}/output/bootiso/install.iso
+          asset_name: homelab-turbo-one-amd64-iso
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "homelab server turbo-one iso file."
+
