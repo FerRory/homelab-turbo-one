@@ -24,16 +24,18 @@ jobs:
           mkdir -p $HOME/.docker
           echo $auth > $HOME/.docker/config.json
 
-      - name: Use buildah bud to create the image
+      - name: Build ISO
         id: build-iso
-        run: ./build-iso-amd64.sh
-
-      - name: Upload iso to release
-        uses: svenstaro/upload-release-action@v2
+        uses: osbuild/bootc-image-builder-action@019bb59c5100ecec4e78c9e94e18a840110f7a0b # v0.0.2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: output/bootiso/install.iso
-          asset_name: homelab-turbo-one-amd64-iso
-          tag: ${{ github.ref }}
-          overwrite: true
-          body: "homelab server turbo-one iso file."
+          config-file: ./config.toml
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          types: |
+            iso
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iso
+          path: ${{ steps.build-iso.outputs.output-directory }}
+          if-no-files-found: error
