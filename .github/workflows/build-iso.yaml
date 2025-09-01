@@ -24,13 +24,6 @@ jobs:
           mkdir -p $HOME/.docker
           echo $auth > $HOME/.docker/config.json
 
-      - name: Log in to the RHT terms based registry
-        uses: redhat-actions/podman-login@v1
-        with:
-          registry: ${{ env.SOURCE_REGISTRY_HOST }}
-          username: ${{ secrets.SOURCE_REGISTRY_USER }}
-          password: ${{ secrets.SOURCE_REGISTRY_PASSWORD }}
-
       - name: Use buildah bud to create the image
         id: build-iso
         run: ./build-iso-amd64.sh

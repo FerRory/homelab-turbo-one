@@ -17,8 +17,6 @@ jobs:
     env:
       IMAGE_NAME: homelab-turbo-one
       REGISTRY: ghcr.io/ferrory
-      SMDEV_CONTAINER_OFF: 1
-      SOURCE_REGISTRY_HOST: "registry.redhat.io"
    
     steps:
       - name: Clone the repository
@@ -31,13 +29,6 @@ jobs:
         run: |
           mkdir -p $HOME/.docker
           echo $auth > $HOME/.docker/config.json
-
-      - name: Log in to the RHT terms based registry
-        uses: redhat-actions/podman-login@v1
-        with:
-          registry: ${{ env.SOURCE_REGISTRY_HOST }}
-          username: ${{ secrets.SOURCE_REGISTRY_USER }}
-          password: ${{ secrets.SOURCE_REGISTRY_PASSWORD }}
 
       - name: Use buildah bud to create the image
         id: build-image
