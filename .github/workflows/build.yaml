@@ -19,23 +19,15 @@ jobs:
       REGISTRY: ghcr.io/ferrory
       SMDEV_CONTAINER_OFF: 1
       SOURCE_REGISTRY_HOST: "registry.redhat.io"
-    container:
-      image: registry.access.redhat.com/ubi9/ubi
-      options: --privileged
-    permissions:
-      contents: write
-      packages: write
    
     steps:
       - name: Clone the repository
         uses: actions/checkout@v4
 
-      - name: Get container tools in UBI builder
-        run: dnf -y install podman buildah skopeo qemu-user-static
-
-      - name: Access a subscription via activation key
-        run: subscription-manager register --org=${{ secrets.RHT_ORGID }} --activationkey=${{ secrets.RHT_ACT_KEY }}
-
+      - name: Install qemu dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static
 
       # workaround for https://github.com/redhat-actions/podman-login/issues/42 since the docker config from the host doesn't come up to the container
       - name: Workaround open podman-login action issue
@@ -63,14 +55,6 @@ jobs:
           containerfiles: |
             ./Containerfile
 
-      - name: Log in to the GitHub Container registry
-        uses: redhat-actions/podman-login@v1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
-          auth_file_path: /run/containers/0/auth.json
-
       - name: Push to GitHub Container Repository
         id: push-to-ghcr
         uses: redhat-actions/push-to-registry@v2
@@ -78,7 +62,5 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
           registry: ${{ env.REGISTRY }}
-
-      - name: Clean up the subscription
-        if: always()
-        run: subscription-manager unregister
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
