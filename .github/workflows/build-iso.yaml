@@ -23,6 +23,12 @@ jobs:
         run: |
           mkdir -p $HOME/.docker
           echo $auth > $HOME/.docker/config.json
+      - name: Log in to the GitHub Container registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
 
       - name: Build ISO
         id: build-iso
@@ -32,6 +38,7 @@ jobs:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           types: |
             iso
+          rootfs: xfs
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
