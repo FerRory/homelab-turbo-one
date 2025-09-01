@@ -17,19 +17,25 @@ jobs:
     env:
       IMAGE_NAME: homelab-turbo-one
       REGISTRY: ghcr.io/ferrory
+      SMDEV_CONTAINER_OFF: 1
+      SOURCE_REGISTRY_HOST: "registry.redhat.io"
+    container:
+      image: registry.access.redhat.com/ubi9/ubi
+      options: --privileged
+    permissions:
+      contents: write
+      packages: write
    
     steps:
       - name: Clone the repository
         uses: actions/checkout@v4
 
-      - name: Use buildah bud to create the image
-        id: build-image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: ${{ env.IMAGE_NAME }}
-          tags: latest ${{ github.sha }}
-          containerfiles: |
-            ./Containerfile
+      - name: Get container tools in UBI builder
+        run: dnf -y install podman buildah skopeo
+
+      - name: Access a subscription via activation key
+        run: subscription-manager register --org=${{ secrets.RHT_ORGID }} --activationkey=${{ secrets.RHT_ACT_KEY }}
+
 
       # workaround for https://github.com/redhat-actions/podman-login/issues/42 since the docker config from the host doesn't come up to the container
       - name: Workaround open podman-login action issue
@@ -39,12 +45,31 @@ jobs:
           mkdir -p $HOME/.docker
           echo $auth > $HOME/.docker/config.json
 
+      - name: Log in to the RHT terms based registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ env.SOURCE_REGISTRY_HOST }}
+          username: ${{ secrets.SOURCE_REGISTRY_USER }}
+          password: ${{ secrets.SOURCE_REGISTRY_PASSWORD }}
+          auth_file_path: /run/containers/0/auth.json
+
+      - name: Use buildah bud to create the image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: latest ${{ github.sha }}
+          platforms: linux/amd64, linux/arm64
+          containerfiles: |
+            ./Containerfile
+
       - name: Log in to the GitHub Container registry
         uses: redhat-actions/podman-login@v1
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
+          auth_file_path: /run/containers/0/auth.json
 
       - name: Push to GitHub Container Repository
         id: push-to-ghcr
@@ -53,3 +78,7 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
           registry: ${{ env.REGISTRY }}
+
+      - name: Clean up the subscription
+        if: always()
+        run: subscription-manager unregister
