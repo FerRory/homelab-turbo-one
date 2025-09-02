@@ -1,15 +1,15 @@
-name: Build bootc ISO
+name: Build bootc ISO for amd64
 on:
   push:
     tags:
       - '*'
 jobs:
   build:
-    name: Build bootc image
+    name: Build bootc image for amd64
 
     runs-on: ubuntu-24.04
     env:
-      IMAGE_NAME: homelab-turbo-one-amd64
+      IMAGE_NAME: homelab-turbo-one
       REGISTRY: ghcr.io/ferrory
    
     steps:

@@ -15,7 +15,7 @@ jobs:
 
     runs-on: ubuntu-24.04
     env:
-      IMAGE_NAME: homelab-turbo-one-amd64
+      IMAGE_NAME: homelab-turbo-one
       REGISTRY: ghcr.io/ferrory
    
     steps:

@@ -1,5 +1,5 @@
 #inspired from https://github.com/nzwulfin/cicd-bootc/blob/main/.github/workflows/build_fedora_bootc.yml
-name: Build bootc image with GHA
+name: Build bootc image with GHA ofr arm64
 on:
   schedule:
 #weekly updates - change as needed
@@ -15,7 +15,7 @@ jobs:
 
     runs-on: ubuntu-24.04-arm
     env:
-      IMAGE_NAME: homelab-turbo-one
+      IMAGE_NAME: homelab-turbo-one-arm64
       REGISTRY: ghcr.io/ferrory
    
     steps:
