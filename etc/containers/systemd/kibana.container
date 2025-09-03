@@ -1,0 +1,14 @@
+[Unit]
+Description=Kibana
+After=network-online.target
+
+[Container]
+ContainerName=kibana
+Image=docker.elastic.co/kibana/kibana:8.12.0
+PublishPort=5601:5601
+Environment=ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+Environment=server.publicBaseUrl=http://172.16.12.141:5601
+Network=elastic.network
+
+[Install]
+WantedBy=multi-user.target default.target

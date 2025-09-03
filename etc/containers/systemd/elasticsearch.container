@@ -1,0 +1,19 @@
+[Unit]
+Description=ElasticSearch
+After=network-online.target
+
+[Container]
+ContainerName=elasticsearch
+Image=docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+PublishPort=9200:9200,9300:9300
+Volume=elasticsearch-data.volume:/usr/share/elasticsearch/data
+Environment=discovery.type=single-node
+Environment=xpack.security.enabled=true
+Environment=ELASTIC_PASSWORD=yourpassword
+Environment=ES_JAVA_OPTS=-Xms512m -Xmx512m
+Environment=xpack.security.enabled=false
+Environment=xpack.security.enrollment.enabled=false
+Network=elastic.network
+
+[Install]
+WantedBy=multi-user.target default.target
