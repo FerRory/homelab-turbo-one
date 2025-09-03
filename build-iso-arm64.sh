@@ -12,7 +12,7 @@ podman run \
 -v ./config.toml:/config.toml:ro \
 --label bootc.image.builder=true \
 quay.io/centos-bootc/bootc-image-builder:latest \
-ghcr.io/ferrory/homelab-turbo-one:latest \
+ghcr.io/ferrory/homelab-turbo-one-arm64-local:latest \
 --output /output/ \
 --type anaconda-iso \
 --target-arch arm64 \
