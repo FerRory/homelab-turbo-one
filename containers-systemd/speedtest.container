@@ -1,0 +1,11 @@
+[Unit]
+Description=Speedtest
+After=network-online.target
+
+[Container]
+ContainerName=speedtest
+Image=docker.io/jraviles/prometheus_speedtest:latest
+Network=prometheus.network
+
+[Install]
+WantedBy=multi-user.target default.target

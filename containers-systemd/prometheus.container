@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus
+After=network-online.target
+
+[Container]
+ContainerName=prometheus
+Image=docker.io/prom/prometheus
+Volume=/etc/containers-config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+PublishPort=9091:9090
+Network=prometheus.network
+
+[Install]
+WantedBy=multi-user.target default.target

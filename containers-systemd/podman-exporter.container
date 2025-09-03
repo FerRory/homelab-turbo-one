@@ -1,0 +1,15 @@
+[Unit]
+Description=Podman exporter for Prometheus
+After=network-online.target
+
+[Container]
+ContainerName=podman-exporter
+User=root
+Image=quay.io/navidys/prometheus-podman-exporter:latest
+Volume=/var/run/podman/podman.sock:/var/run/podman/podman.sock:ro
+Environment=CONTAINER_HOST=unix:///var/run/podman/podman.sock
+SecurityLabelDisable=true
+Network=prometheus.network
+
+[Install]
+WantedBy=multi-user.target default.target

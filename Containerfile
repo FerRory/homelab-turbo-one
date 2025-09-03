@@ -1,5 +1,8 @@
-#FROM registry.redhat.io/rhel10/rhel-bootc:10.0
 FROM quay.io/centos-bootc/centos-bootc:stream10
+
+LABEL org.opencontainers.image.source="https://github.com/ferrory/homelab-turbo-one"
+LABEL org.opencontainers.image.description="My homelab-turbo-one bootc server hosting the following containers: Docker Registry, Gitea, HTTPD and ELK."
+LABEL org.opencontainers.image.license="MIT"
 
 #include unit files and containers
 ADD etc etc
@@ -8,11 +11,6 @@ ADD var var
 #add additional software
 RUN dnf install -y cockpit cockpit-podman cockpit-storaged cockpit-ws lm_sensors sysstat tuned firewalld && \
       dnf clean all && \
-      firewall-offline-cmd --port=8080:tcp && \
-      firewall-offline-cmd --port=2222:tcp && \
-      firewall-offline-cmd --port=3000:tcp && \
-      firewall-offline-cmd --port=5000:tcp && \
-      firewall-offline-cmd --port=5601:tcp && \
       rm -rf /var/log/*.log /var/cache/* /var/log/rhsm/rhsm.log
 
 
@@ -21,8 +19,16 @@ RUN systemctl enable lm_sensors sysstat tuned fstrim.timer podman.socket podman-
 
 RUN ln -s /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
 
-RUN bootc container lint
+# Add containers
+ADD containers-systemd etc/containers/systemd
+ADD containers-config etc/containers-config
 
-LABEL org.opencontainers.image.source="https://github.com/ferrory/homelab-turbo-one"
-LABEL org.opencontainers.image.description="My homelab-turbo-one bootc server hosting the following containers: Docker Registry, Gitea, HTTPD and ELK."
-LABEL org.opencontainers.image.license="MIT"
+# Add firewall rules for containers
+RUN firewall-offline-cmd --port=8080:tcp && \
+      firewall-offline-cmd --port=2222:tcp && \
+      firewall-offline-cmd --port=3000:tcp && \
+      firewall-offline-cmd --port=5000:tcp && \
+      firewall-offline-cmd --port=5601:tcp && \
+      firewall-offline-cmd --port=9091:tcp
+
+RUN bootc container lint

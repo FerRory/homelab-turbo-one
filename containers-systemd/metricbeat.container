@@ -6,12 +6,16 @@ After=network-online.target
 ContainerName=metricbeat
 User=root
 Image=docker.elastic.co/beats/metricbeat:9.1.3
-Volume=/etc/elk/metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml:ro
+Volume=/etc/containers-config/metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml:ro
 Volume=/var/run/podman/podman.sock:/var/run/podman/podman.sock:ro
-Volume=/var/lib/containers:/var/lib/docker/containers:ro
+Volume=/var/lib/containers:/var/lib/containers:ro
+Volume=/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+Volume=/proc:/hostfs/proc:ro
+Volume=/:/hostfs:ro
 Environment=setup.kibana.host=kibana:5601
 Environment=output.elasticsearch.hosts=["elasticsearch:9200"]
 SecurityLabelDisable=true
+AddCapability=SYS_PTRACE DAC_READ_SEARCH
 Network=elastic.network
 
 [Install]
