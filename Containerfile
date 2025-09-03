@@ -12,6 +12,7 @@ RUN dnf install -y cockpit cockpit-podman cockpit-storaged cockpit-ws lm_sensors
       firewall-offline-cmd --port=2222:tcp && \
       firewall-offline-cmd --port=3000:tcp && \
       firewall-offline-cmd --port=5000:tcp && \
+      firewall-offline-cmd --port=5601:tcp && \
       rm -rf /var/log/*.log /var/cache/* /var/log/rhsm/rhsm.log
 
 
