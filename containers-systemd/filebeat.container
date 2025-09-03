@@ -1,0 +1,23 @@
+[Unit]
+Description=FileBeat
+After=network-online.target
+
+[Container]
+ContainerName=filebeat
+User=root
+Image=docker.elastic.co/beats/filebeat:9.1.3
+Volume=/etc/containers-config/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro
+Volume=filebeat-data.volume:/usr/share/filebeat/data:rw
+Volume=/var/run/podman/podman.sock:/var/run/podman/podman.sock:ro
+Volume=/var/lib/containers:/var/lib/containers:ro
+Volume=/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+Volume=/proc:/hostfs/proc:ro
+Volume=/:/hostfs:ro
+Environment=setup.kibana.host=kibana:5601
+Environment=output.elasticsearch.hosts=["elasticsearch:9200"]
+SecurityLabelDisable=true
+AddCapability=SYS_PTRACE DAC_READ_SEARCH
+Network=elastic.network
+
+[Install]
+WantedBy=multi-user.target default.target

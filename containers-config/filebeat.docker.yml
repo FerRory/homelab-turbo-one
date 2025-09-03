@@ -1,0 +1,33 @@
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      host: unix:///var/run/podman/podman.sock
+      hints.enabled: true
+
+filebeat.inputs:
+ - type: filestream
+   enabled: true
+   id: my-container-input
+   prospector.scanner.symlinks: true
+   parsers:
+     - container:
+         stream: all
+         format: auto
+   paths:
+     - /var/lib/containers/storage/overlay-containers/*/userdata/ctr.log
+
+processors:
+- add_cloud_metadata: ~
+
+output.elasticsearch:
+  hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
+  username: 'elastic'
+  password: 'yourpassword'
+
+setup.kibana:
+  host: "kibana:5601"
