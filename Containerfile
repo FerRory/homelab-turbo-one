@@ -34,6 +34,6 @@ RUN firewall-offline-cmd --port=8080:tcp && \
 RUN dnf install -y openscap-utils scap-security-guide && dnf clean all && \
       rm -rf /var/log/*.log /var/cache/* /var/log/rhsm/rhsm.log
 
-RUN oscap-im --profile cis /usr/share/xml/scap/ssg/content/ssg-cs10-ds.xml 
+RUN oscap-im --profile cis /usr/share/xml/scap/ssg/content/ssg-rhel10-ds.xml 
 
 RUN bootc container lint
