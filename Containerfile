@@ -9,7 +9,7 @@ ADD etc etc
 ADD var var
 
 #add additional software
-RUN dnf install -y cockpit cockpit-podman cockpit-storaged cockpit-ws lm_sensors sysstat tuned firewalld && \
+RUN dnf install -y cockpit cockpit-podman cockpit-storaged cockpit-ws cockpit-ostree lm_sensors sysstat tuned firewalld && \
       dnf clean all && \
       rm -rf /var/log/*.log /var/cache/* /var/log/rhsm/rhsm.log
 
