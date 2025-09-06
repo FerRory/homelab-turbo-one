@@ -4,11 +4,10 @@ My homelab-turbo-one bootc server hosting the following containers: Docker Regis
 
 ## Elastic
 
-Setup Metricbeat dashboards in Kibana:
+Setup Metricbeat and FileBeat dashboards in Kibana:
    ```
-sudo podman exec -it metricbeat bash
-
-./metricbeat setup
+sudo podman exec -it metricbeat bash -c './metricbeat setup'
+sudo podman exec -it filebeat bash -c './filebeat setup'
    ```
 
 
