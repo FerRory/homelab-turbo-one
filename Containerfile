@@ -9,7 +9,7 @@ ADD etc etc
 ADD var var
 
 #add additional software
-RUN dnf install -y cockpit cockpit-podman cockpit-storaged cockpit-ws cockpit-ostree lm_sensors sysstat tuned firewalld && \
+RUN dnf install -y cockpit cockpit-podman cockpit-storaged cockpit-ws cockpit-ostree lm_sensors sysstat tuned firewalld wget && \
       dnf clean all && \
       rm -rf /var/log/*.log /var/cache/* /var/log/rhsm/rhsm.log
 
@@ -35,5 +35,7 @@ RUN dnf install -y openscap-utils scap-security-guide && dnf clean all && \
       rm -rf /var/log/*.log /var/cache/* /var/log/rhsm/rhsm.log
 
 RUN oscap-im --profile cis /usr/share/xml/scap/ssg/content/ssg-rhel10-ds.xml 
+
+RUN systemctl disable rpm-ostree-countme.timer
 
 RUN bootc container lint
