@@ -1,0 +1,56 @@
+name: Build bootc ISO for arm64
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    name: Build bootc image for arm64
+
+    runs-on: ubuntu-24.04-arm
+    env:
+      IMAGE_NAME: homelab-turbo-one
+      REGISTRY: ghcr.io/ferrory
+   
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v4
+
+      # workaround for https://github.com/redhat-actions/podman-login/issues/42 since the docker config from the host doesn't come up to the container
+      - name: Workaround open podman-login action issue
+        env:
+          auth: "{ \"auths\": {} }"
+        run: |
+          mkdir -p $HOME/.docker
+          echo $auth > $HOME/.docker/config.json
+      - name: Log in to the GitHub Container registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Create config.toml
+        id: create-config-toml
+        uses: ferrory/bootc-toml-action@v0.0.1
+        with:
+          name: ansible
+          password: ${{ secrets.USER_PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
+
+      - name: Build ISO
+        id: build-iso
+        uses: osbuild/bootc-image-builder-action@019bb59c5100ecec4e78c9e94e18a840110f7a0b # v0.0.2
+        with:
+          config-file: ./config.toml
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          types: |
+            iso
+          rootfs: xfs
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: homelab-turbo-one-arm64-iso
+          path: ${{ steps.build-iso.outputs.output-directory }}
+          if-no-files-found: error
