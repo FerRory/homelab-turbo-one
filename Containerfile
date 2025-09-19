@@ -11,7 +11,7 @@ ADD var var
 #add additional software
 RUN dnf install -y cockpit cockpit-podman cockpit-storaged cockpit-ws cockpit-ostree lm_sensors sysstat tuned firewalld wget && \
       dnf clean all && \
-      rm -rf /var/log/*.log /var/cache/* /var/log/rhsm/rhsm.log
+      rm /var/{log,cache,lib}/* -rf
 
 
 #enable desired units
@@ -32,9 +32,11 @@ RUN firewall-offline-cmd --port=8080:tcp && \
       firewall-offline-cmd --port=9091:tcp
 
 RUN dnf install -y openscap-utils scap-security-guide && dnf clean all && \
-      rm -rf /var/log/*.log /var/cache/* /var/log/rhsm/rhsm.log
+      rm /var/{log,cache,lib}/* -rf
 
-RUN oscap-im --profile cis /usr/share/xml/scap/ssg/content/ssg-rhel10-ds.xml 
+RUN oscap-im --profile cis /usr/share/xml/scap/ssg/content/ssg-rhel10-ds.xml && \
+      dnf clean all && \
+      rm /var/{log,cache,lib}/* -rf
 
 RUN systemctl disable rpm-ostree-countme.timer
 
